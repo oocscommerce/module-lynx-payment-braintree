@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © OOCS Commerce (https://www.oocscommerce.com). All rights reserved.
+ * See LICENSE.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!--
+        Lynx checkout renderers of the Braintree methods, one per method code (docs/payment-integration.md); the
+        renderer only produces the nonce in additional_data.
+    -->
+    <type name="OOCS\LynxCheckout\Provider\Checkout\Step\Payment">
+        <arguments>
+            <argument name="paymentMethodRenderers" xsi:type="array">
+                <!-- Card over hosted fields, with 3D Secure when the admin asks. -->
+                <item name="braintree" xsi:type="array">
+                    <item name="component" xsi:type="string">OOCS_LynxPaymentBraintree/Components/Cc</item>
+                    <item name="config" xsi:type="object">OOCS\LynxPaymentBraintree\Model\Config\Cc</item>
+                    <!--
+                        PayPal_Braintree validates place order under its own reCAPTCHA key for the card and exempts
+                        card, PayPal and Google Pay from place_order.
+                    -->
+                    <item name="recaptcha" xsi:type="string">braintree</item>
+                </item>
+                <!-- The wallets: each button owns the action and produces the nonce the order is placed with. -->
+                <item name="braintree_paypal" xsi:type="array">
+                    <item name="component" xsi:type="string">OOCS_LynxPaymentBraintree/Components/PayPal</item>
+                    <item name="config" xsi:type="object">OOCS\LynxPaymentBraintree\Model\Config\PayPal</item>
+                    <item name="recaptcha" xsi:type="string">none</item>
+                </item>
+                <item name="braintree_googlepay" xsi:type="array">
+                    <item name="component" xsi:type="string">OOCS_LynxPaymentBraintree/Components/GooglePay</item>
+                    <item name="config" xsi:type="object">OOCS\LynxPaymentBraintree\Model\Config\GooglePay</item>
+                    <item name="recaptcha" xsi:type="string">none</item>
+                </item>
+                <item name="braintree_applepay" xsi:type="array">
+                    <item name="component" xsi:type="string">OOCS_LynxPaymentBraintree/Components/ApplePay</item>
+                    <item name="config" xsi:type="object">OOCS\LynxPaymentBraintree\Model\Config\ApplePay</item>
+                </item>
+                <item name="braintree_venmo" xsi:type="array">
+                    <item name="component" xsi:type="string">OOCS_LynxPaymentBraintree/Components/Venmo</item>
+                    <item name="config" xsi:type="object">OOCS\LynxPaymentBraintree\Model\Config\Venmo</item>
+                </item>
+                <!--
+                    US bank debit: a form of ours (bank details are not card data), tokenized with the mandate the
+                    shopper agrees to.
+                -->
+                <item name="braintree_ach_direct_debit" xsi:type="array">
+                    <item name="component" xsi:type="string">OOCS_LynxPaymentBraintree/Components/Ach</item>
+                    <item name="config" xsi:type="object">OOCS\LynxPaymentBraintree\Model\Config\Ach</item>
+                </item>
+                <!-- One button per local scheme the admin allowed (iDEAL, Bancontact…). -->
+                <item name="braintree_local_payment" xsi:type="array">
+                    <item name="component" xsi:type="string">OOCS_LynxPaymentBraintree/Components/Lpm</item>
+                    <item name="config" xsi:type="object">OOCS\LynxPaymentBraintree\Model\Config\Lpm</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>

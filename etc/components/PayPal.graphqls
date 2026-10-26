@@ -1,0 +1,51 @@
+"PayPal express button for the checkout page — the shopper approves in PayPal's popup, which supplies the shipping address and the rate, and the order is placed without walking the steps. Shows only where Braintree PayPal is active, its checkout-page button is switched on and the review step is skipped."
+type BraintreeExpressPaypal @component(
+  code: "default_braintree_express_paypal"
+  template: "OOCS_LynxPaymentBraintree::Components/Express/PayPal"
+  provider: "OOCS\\LynxPaymentBraintree\\Provider\\Express\\PayPal"
+  label: "Braintree PayPal Express"
+  group: "express_checkout"
+  icon: "ph-wallet"
+  zones: ["content"]
+  availableOn: ["checkout_index_index"]
+) {
+  "False when the server says this page gets no button (see Provider\\Express\\PayPal)"
+  enabled: Boolean! @optional
+  "Every string the button shows, translated by the provider on the server."
+  labels: StringMap! @optional
+  intent: String! @optional
+  displayName: String! @optional
+  buttonStyle: BraintreeExpressPaypalButtonStyle! @optional
+  "Which of PayPal's funding sources this node draws: the plain button, Pay Later or Credit"
+  funding: String! @optional
+}
+
+"PayPal Pay Later button for the checkout page — same flow as the PayPal express button, with PayPal's instalment funding source. Shows where Braintree PayPal is active, Pay Later is switched on for this location and the review step is skipped."
+type BraintreeExpressPaylater @component(
+  code: "default_braintree_express_paylater"
+  template: "OOCS_LynxPaymentBraintree::Components/Express/PayPal"
+  provider: "OOCS\\LynxPaymentBraintree\\Provider\\Express\\PayPalPayLater"
+  label: "Braintree Pay Later Express"
+  group: "express_checkout"
+  icon: "ph-wallet"
+  zones: ["content"]
+  availableOn: ["checkout_index_index"]
+) @inherit(from: "BraintreeExpressPaypal", except: [])
+
+"PayPal Credit button for the checkout page — same flow as the PayPal express button, with the PayPal Credit funding source and its own palette. PayPal decides eligibility by country and currency, so the button draws nothing where Credit is not offered."
+type BraintreeExpressCredit @component(
+  code: "default_braintree_express_credit"
+  template: "OOCS_LynxPaymentBraintree::Components/Express/PayPal"
+  provider: "OOCS\\LynxPaymentBraintree\\Provider\\Express\\PayPalCredit"
+  label: "Braintree PayPal Credit Express"
+  group: "express_checkout"
+  icon: "ph-wallet"
+  zones: ["content"]
+  availableOn: ["checkout_index_index"]
+) @inherit(from: "BraintreeExpressPaypal", except: [])
+
+type BraintreeExpressPaypalButtonStyle {
+  color: String! @optional
+  shape: String! @optional
+  label: String! @optional
+}
